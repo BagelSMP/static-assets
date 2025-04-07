@@ -49,7 +49,7 @@ jobs:
               uses: peter-evans/create-pull-request@v5
               with:
                 token: ${{ secrets.GITHUB_TOKEN }}
-                branch: ${{ steps.commit.outcome.branch }}
+                branch: "update-hashes-$(data +%s)"
                 base: main
                 title: "Update SHA1 Hashes"
                 body: "Automated pull request"
