@@ -26,7 +26,8 @@ jobs:
               run: |
                 git config --global user.name "Github Action"
                 git config --global user.email "action@github.com"
-                BRANCH_NAME="update-hashes-$(date +%s)"
+                TIMESTAMP=$(date +%s)
+                BRANCH_NAME="update-hashes-$TIMESTAMP"
                 git checkout -b "$BRANCH_NAME"
                 git add packs/*.sha1
                 if git commit -m "Update SHA1 for Packs"; then
@@ -45,11 +46,11 @@ jobs:
                 echo "Branch from commit step: ${{ steps.commit.outcome.branch }}"
 
             - name: Create PR
-              if: steps.commit.outputs.branch != ''
+              if: steps.commit.outputs.branch != '' && env.TIMESTAMP != ''
               uses: peter-evans/create-pull-request@v5
               with:
                 token: ${{ secrets.GITHUB_TOKEN }}
-                branch: "update-hashes-$(data +%s)"
+                branch: "update-hashes-${{ env.TIMESTAMP }}"
                 base: main
                 title: "Update SHA1 Hashes"
                 body: "Automated pull request"
