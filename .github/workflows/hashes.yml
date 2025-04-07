@@ -3,7 +3,7 @@ name: Update Hashes
 on:
     push:
         branches:
-            -main
+            - main
     workflow_dispatch:
 
 jobs:
@@ -12,6 +12,8 @@ jobs:
         steps:
             - name: Checkout repository
               uses: actions/checkout@v3
+              with:
+                token: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Setup Script
               run: |
@@ -19,12 +21,31 @@ jobs:
                 chmod +x generateHash.sh
                 ./generateHash.sh
 
-            - name: Commit and push
+            - name: Commit changes
+              id: commit
               run: |
                 git config --global user.name "Github Action"
                 git config --global user.email "action@github.com"
+                BRANCH_NAME="update-hashes-$(date +%s)"
+                git checkout -b "$BRANCH_NAME"
                 git add packs/*.sha1
-                git commit -m "Update SHA1 for Packs" || echo "Nothing to commit"
-                git push
+                if git commit -m "Update SHA1 for Packs"; then
+                    git push orgin "$BRANCH_NAME"
+                    echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
+                else
+                    echo "No changes"
+                    echo "branch=" >> $GITHUB_OUTPUT
+                fi
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Create PR
+              if: steps.commit.outputs.branch != ''
+              uses: peter-evans/create-pull-request@v5
+              with:
+                token: ${{ secrets.GITHUB_TOKEN }}
+                branch: ${{ steps.commit.outcome.branch }}
+                base: main
+                title: "Update SHA1 Hashes"
+                body: "Automated pull request"
+                commit-message: "Update SHA1 files for ZIP Packs"
