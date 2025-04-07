@@ -46,11 +46,11 @@ jobs:
                 echo "Branch from commit step: ${{ steps.commit.outcome.branch }}"
 
             - name: Create PR
-              if: steps.commit.outputs.branch != '' && env.TIMESTAMP != ''
+              if: success()
               uses: peter-evans/create-pull-request@v5
               with:
                 token: ${{ secrets.GITHUB_TOKEN }}
-                branch: "update-hashes-${{ env.TIMESTAMP }}"
+                branch: "$(git symbolic-ref HEAD --short)"
                 base: main
                 title: "Update SHA1 Hashes"
                 body: "Automated pull request"
