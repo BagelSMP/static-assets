@@ -31,10 +31,10 @@ jobs:
                 git add packs/*.sha1
                 if git commit -m "Update SHA1 for Packs"; then
                     git push origin "$BRANCH_NAME"
-                    echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
+                    echo "branch=$BRANCH_NAME" >> "$GITHUB_OUTPUT"
                 else
                     echo "No changes"
-                    echo "branch=" >> $GITHUB_OUTPUT
+                    echo "branch=" >> "$GITHUB_OUTPUT"
                 fi
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
