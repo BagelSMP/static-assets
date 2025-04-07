@@ -33,6 +33,7 @@ jobs:
                 if git commit -m "Update SHA1 for Packs"; then
                     git push origin "$BRANCH_NAME"
                     echo "branch=$BRANCH_NAME" | tee -a "$GITHUB_OUTPUT"
+                    echo "BRANCH_NAME=$BRANCH_NAME" >> "$GITHUB_ENV"
                     echo "Branch created and pushed: $BRANCH_NAME"
                 else
                     echo "No changes"
@@ -46,11 +47,11 @@ jobs:
                 echo "Branch from commit step: ${{ steps.commit.outcome.branch }}"
 
             - name: Create PR
-              if: success()
+              if: success() && env.BRANCH_NAME != ''
               uses: peter-evans/create-pull-request@v5
               with:
                 token: ${{ secrets.GITHUB_TOKEN }}
-                branch: "$(git symbolic-ref HEAD --short)"
+                branch: ${{ env.BRANCH_NAME }}
                 base: main
                 title: "Update SHA1 Hashes"
                 body: "Automated pull request"
