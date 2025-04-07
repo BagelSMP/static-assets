@@ -30,7 +30,7 @@ jobs:
                 git checkout -b "$BRANCH_NAME"
                 git add packs/*.sha1
                 if git commit -m "Update SHA1 for Packs"; then
-                    git push orgin "$BRANCH_NAME"
+                    git push origin "$BRANCH_NAME"
                     echo "branch=$BRANCH_NAME" >> $GITHUB_OUTPUT
                 else
                     echo "No changes"
