@@ -32,13 +32,18 @@ jobs:
                 if git commit -m "Update SHA1 for Packs"; then
                     git push origin "$BRANCH_NAME"
                     echo "branch=$BRANCH_NAME" >> "$GITHUB_OUTPUT"
+                    echo "Branch created and pushed: $BRANCH_NAME"
                 else
                     echo "No changes"
                     echo "branch=" >> "$GITHUB_OUTPUT"
                 fi
               env:
                 GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+            
+            - name: Debug output
+              run: |
+                echo "Branch from commit step: ${{ steps.commit.outcome.branch }}"
+                
             - name: Create PR
               if: steps.commit.outputs.branch != ''
               uses: peter-evans/create-pull-request@v5
