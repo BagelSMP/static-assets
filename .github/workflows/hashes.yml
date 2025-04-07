@@ -1,0 +1,30 @@
+name: Update Hashes
+
+on:
+    push:
+        branches:
+            -main
+    workflow_dispatch:
+
+jobs:
+    update-hashes:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
+
+            - name: Setup Script
+              run: |
+                cd packs
+                chmod +x generateHash.sh
+                ./generateHash.sh
+
+            - name: Commit and push
+              run: |
+                git config --global user.name "Github Action"
+                git congig --global user.email "action@github.com"
+                git add packs/*.sha1
+                git commit -m "Update SHA1 for Packs" || echo "Nothing to commit"
+                git push
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
