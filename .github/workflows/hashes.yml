@@ -15,6 +15,11 @@ jobs:
               with:
                 token: ${{ secrets.GITHUB_TOKEN }}
 
+            - name: Zip resourcepacks
+              run: |
+                chmod +x unzip/buildpacks.sh
+                ./unzip/buildpacks.sh
+
             - name: Setup Script
               run: |
                 cd packs
