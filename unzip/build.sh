@@ -12,17 +12,19 @@ echo "Zipping packs"
 for folder in */; do
     folder_name="${folder%/}"
     if [ -d "$folder_name" ]; then
+        cd "$folder_name" || { echo "Error could not cd"; continue; }
         zip_file="${folder_name}.zip"
         echo "Zipping $folder_name into $zip_file"
-        zip -r "$zip_file" "$folder_name"
+        zip -r "$zip_file" ./*
         
         # Move the zip file to /packs
         if [ -f "$zip_file" ]; then
-            mv "$zip_file" ../packs/
+            mv "$zip_file" ../../packs/
             echo "Moved $zip_file to /packs/"
         else
             echo "Error: Failed to create $zip_file"
         fi
+        cd ..
     fi
 done
 
